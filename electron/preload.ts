@@ -19,8 +19,8 @@ const api = {
         ipcRenderer.send("message", message);
     },
     /**
-    Here function for AppBar
-   */
+     * Here function for AppBar
+     */
     Minimize: () => {
         ipcRenderer.send("minimize");
     },
