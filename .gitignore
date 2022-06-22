@@ -1,5 +1,6 @@
+# deps
 node_modules
-.DS_Store
+
 dist
 dist-ssr
 *.local
@@ -19,3 +20,13 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+
+# editor
+.DS_Store
+.vscode
+.idea
+
+# lock file
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

@@ -4,8 +4,12 @@
   "license": "MIT",
   "main": "main/index.js",
   "author": {
-    "name": "qiao"
+    "name": "YangQiao.Chun",
+    "email": "chunyangqiao91@gmail.com"
   },
+  "contributors": [
+    "wuteng606 <>"
+  ],
   "description": "base: vite-reactts-electron-starter",
   "keywords": [
     "vite",
