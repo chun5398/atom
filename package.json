@@ -8,7 +8,7 @@
         "email": "chunyangqiao91@gmail.com"
     },
     "contributors": [
-        "wuteng606 <>"
+        "wuteng606 <wuteng606@163.com>"
     ],
     "description": "base: vite-reactts-electron-starter",
     "keywords": [
@@ -18,11 +18,11 @@
         "typescript"
     ],
     "repository": {
-        "url": "https://github.com/lTimeless/vite-reactts-electron-starter"
+        "url": "https://github.com/chun5398/atom"
     },
     "productName": "atom",
     "scripts": {
-        "dev": "concurrently \"yarn dev:vite\" \"yarn dev:electron\" ",
+        "dev": "concurrently \"pnpm dev:vite\" \"pnpm dev:electron\" ",
         "dev:vite": "vite",
         "dev:electron": "npm run build:electron && electron .",
         "build": "npm run build:vite && npm run build:electron",
