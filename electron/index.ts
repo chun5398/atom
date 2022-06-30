@@ -5,7 +5,11 @@ import { join } from "path";
 import { app, BrowserWindow, ipcMain, IpcMainEvent } from "electron";
 import isDev from "electron-is-dev";
 import { MySqlConnection } from "./service/connect/msyqlConnection";
-import {} from "electron-reload";
+import path from "path";
+require("electron-reload")(__dirname, {
+    electron: path.join(__dirname, "../node_modules", ".bin", "electron"),
+});
+console.log(path.join(__dirname, "../node_modules", ".bin", "electron"));
 
 const height = 600;
 const width = 900;
@@ -76,15 +80,22 @@ app.on("window-all-closed", () => {
 // code. You can also put them in separate files and require them here.
 
 // listen the channel `message` and resend the received message to the renderer process
-ipcMain.on("message", (event: IpcMainEvent, message: any) => {
+ipcMain.on("message", async (event: IpcMainEvent, message: any) => {
     console.log(message);
 
-    new MySqlConnection({
+    const msyqlConnection = new MySqlConnection({
         host: "localhost",
         port: 3306,
         user: "root",
         password: "root",
     });
+    await msyqlConnection.connect();
+    // new MySqlConnection({
+    //     host: "localhost",
+    //     port: 3306,
+    //     user: "root",
+    //     password: "root",
+    // });
 
     setTimeout(() => event.sender.send("message", "hi from electron"), 500);
 });
