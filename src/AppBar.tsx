@@ -16,19 +16,19 @@ function AppBar() {
 
     return (
         <>
-            <div className="py-0.5 flex justify-between draggable">
+            <div className=" flex justify-between draggable">
                 <div className="inline-flex">
-                    <img className="h-6 lg:-ml-2" src={Icon} alt="Icon of Electron" />
-                    <p className="text-xs md:pt-1 md:-ml-1 lg:-ml-2">Vite App</p>
+                    <img className="h-5 lg:-ml-2" src={Icon} alt="Icon of Electron" />
+                    <p className="text-xs flex items-center">Vite App</p>
                 </div>
                 <div className="inline-flex -mt-1">
                     <button
                         onClick={window.Main.Minimize}
-                        className="undraggable md:px-4 lg:px-3 pt-1 hover:bg-gray-300"
+                        className="undraggable px-4 pt-1 hover:bg-gray-300"
                     >
                         &#8211;
                     </button>
-                    <button onClick={handleToggle} className="undraggable px-6 lg:px-5 pt-1 hover:bg-gray-300">
+                    <button onClick={handleToggle} className="undraggable px-4 pt-1 hover:bg-gray-300">
                         {isMaximize ? "\u2752" : "⃞"}
                     </button>
                     <button
@@ -39,7 +39,7 @@ function AppBar() {
                     </button>
                 </div>
             </div>
-            <div className="bg-gray-900 text-white undraggable">
+            {/* <div className="bg-gray-900 text-white undraggable">
                 <div className="flex text-center">
                     <div className="text-sm w-8  hover:bg-gray-700">File</div>
                     <div className="text-sm w-8   hover:bg-gray-700">Edit</div>
@@ -47,7 +47,7 @@ function AppBar() {
                     <div className="text-sm w-14  hover:bg-gray-700 ">Window</div>
                     <div className="text-sm w-9  hover:bg-gray-700 ">Help</div>
                 </div>
-            </div>
+            </div> */}
         </>
     );
 }

@@ -2,7 +2,7 @@ import * as mysql from "mysql2/promise";
 import { BaseConnection } from "./baseConnection";
 
 export class MySqlConnection extends BaseConnection {
-    private conn: mysql.Connection | undefined;
+    conn: mysql.Connection | undefined;
     private config:
         | {
               host?: string;
@@ -47,5 +47,10 @@ export class MySqlConnection extends BaseConnection {
 
     bitToBoolean(buf: Buffer): any {
         return buf ? buf[0] == 1 : null;
+    }
+
+    async listDatabases() {
+        const databases = await this.conn?.query("show DATABASES;");
+        return databases?.[0];
     }
 }

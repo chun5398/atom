@@ -4,8 +4,8 @@ import { join } from "path";
 // Packages
 import { app, BrowserWindow, ipcMain, IpcMainEvent } from "electron";
 import isDev from "electron-is-dev";
-import { MySqlConnection } from "./service/connect/msyqlConnection";
 import path from "path";
+import { MySqlConnetionManager } from "./manager/mysqlConnectionManager";
 require("electron-reload")(__dirname, {
     electron: path.join(__dirname, "../node_modules", ".bin", "electron"),
 });
@@ -13,6 +13,12 @@ console.log(path.join(__dirname, "../node_modules", ".bin", "electron"));
 
 const height = 600;
 const width = 900;
+
+const globalManager: {
+    mysqlConnectionManager: MySqlConnetionManager | null;
+} = {
+    mysqlConnectionManager: null,
+};
 
 function createWindow() {
     // Create the browser window.
@@ -55,6 +61,11 @@ function createWindow() {
     ipcMain.on("close", () => {
         window.close();
     });
+    initGlobalManager();
+}
+
+function initGlobalManager() {
+    globalManager.mysqlConnectionManager = new MySqlConnetionManager();
 }
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -66,6 +77,7 @@ app.whenReady().then(() => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
+        // 初始化 全局manager
     });
 });
 
@@ -83,19 +95,47 @@ app.on("window-all-closed", () => {
 ipcMain.on("message", async (event: IpcMainEvent, message: any) => {
     console.log(message);
 
-    const msyqlConnection = new MySqlConnection({
-        host: "localhost",
-        port: 3306,
-        user: "root",
-        password: "root",
-    });
-    await msyqlConnection.connect();
-    // new MySqlConnection({
+    // const msyqlConnection = new MySqlConnection({
     //     host: "localhost",
     //     port: 3306,
     //     user: "root",
     //     password: "root",
     // });
+    // await msyqlConnection.connect();
+    // // new MySqlConnection({
+    // //     host: "localhost",
+    // //     port: 3306,
+    // //     user: "root",
+    // //     password: "root",
+    // // });
 
     setTimeout(() => event.sender.send("message", "hi from electron"), 500);
 });
+
+ipcMain.on(
+    "create_mysql_connection",
+    async (
+        event: IpcMainEvent,
+        args: {
+            connectionName: string;
+        },
+    ) => {
+        const resp = await globalManager.mysqlConnectionManager?.createMySqlConnection({
+            connectionName: args.connectionName,
+        });
+
+        if (resp && resp?.err) {
+            return event.sender.send("server_error", {
+                message: `${resp.err.message}`,
+            });
+        }
+
+        const databases = await globalManager.mysqlConnectionManager
+            ?.getMySqlConnection(args.connectionName)
+            ?.listDatabases();
+        return event.sender.send("create_mysql_connection", {
+            status: 1,
+            databases: databases,
+        });
+    },
+);

@@ -8,6 +8,10 @@ declare global {
 }
 
 const api = {
+    createMysqlConnection: (args: { connectionName: string }) => {
+        ipcRenderer.send("create_mysql_connection", args);
+    },
+
     /**
      * Here you can expose functions to the renderer process
      * so they can interact with the main (electron) side

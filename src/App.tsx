@@ -1,12 +1,26 @@
 import React, { useEffect, useState } from "react";
 import AppBar from "./AppBar";
 
-function App() {
-    console.log(window.ipcRenderer);
+export enum ConnectionStatus {
+    DISCONNECT,
+    CONNECTING,
+    CONNECTED,
+}
+export interface MysqlData {
+    status: ConnectionStatus;
+    databases: any[];
+}
 
+function App() {
     const [isOpen, setOpen] = useState(false);
     const [isSent, setSent] = useState(false);
     const [fromMain, setFromMain] = useState<string | null>(null);
+    const [statusMessage, setStatusMessage] = useState<string>("");
+
+    const [mysqlData, setMysqlData] = useState<MysqlData>({
+        status: ConnectionStatus.DISCONNECT,
+        databases: [],
+    });
 
     const handleToggle = () => {
         if (isOpen) {
@@ -17,6 +31,16 @@ function App() {
             setFromMain(null);
         }
     };
+    const handleCreateMysqlConnection = () => {
+        if (window.Main) {
+            window.Main.createMysqlConnection({
+                connectionName: Date.now().toString(),
+            });
+        } else {
+            setStatusMessage("You are in a Browser, so no Electron functions are available");
+        }
+    };
+
     const sendMessageToElectron = () => {
         if (window.Main) {
             window.Main.sendMessage("Hello I'm from React World");
@@ -33,50 +57,54 @@ function App() {
             });
     }, [fromMain, isSent]);
 
+    useEffect(() => {
+        window.Main.on("server_error", (message: string) => {
+            setStatusMessage(message);
+        });
+        window.Main.on("create_mysql_connection", (data: MysqlData) => {
+            setMysqlData(data);
+        });
+    }, []);
+
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-screen divide-y divide-gray-900">
             {window.Main && (
                 <div className="flex-none">
                     <AppBar />
                 </div>
             )}
-            <div className="flex-auto">
-                <div className=" flex flex-col justify-center items-center h-full bg-gray-800 space-y-4">
-                    <h1 className="text-2xl text-gray-200">Vite + React + Typescript + Electron + Tailwind</h1>
-                    <button
-                        className="bg-yellow-400 py-2 px-4 rounded focus:outline-none shadow hover:bg-yellow-200"
-                        onClick={handleToggle}
-                    >
-                        Click Me
-                    </button>
-                    {isOpen && (
-                        <div className="flex flex-col space-y-4 items-center">
-                            <div className="flex space-x-3">
-                                <h1 className="text-xl text-gray-50">
-                                    💝 Welcome 💝, now send a message to the Main 📩📩
-                                </h1>
-                                <button
-                                    onClick={sendMessageToElectron}
-                                    className=" bg-green-400 rounded px-4 py-0 focus:outline-none hover:bg-green-300"
-                                >
-                                    Send
-                                </button>
+            <div className="flex-auto ">
+                <div className="flex flex-column justify-center items-center h-full bg-gray-800 space-y-4">
+                    <div className="flex flex-col text-gray-200 text-lg p-3 h-full">
+                        <button
+                            className="flex-none bg-blue-500 p-1 rounded-full text-xs"
+                            onClick={handleCreateMysqlConnection}
+                        >
+                            Create Mysql Connection
+                        </button>
+                        <div className="flex-grow text-base my-1 overflow-scroll-y text-lg">
+                            <div className="mb-1">
+                                <p>当前连接数</p>
                             </div>
-                            {isSent && (
-                                <div>
-                                    <h4 className=" text-green-500">Message sent!!</h4>
-                                </div>
-                            )}
-                            {fromMain && (
-                                <div>
-                                    {" "}
-                                    <h4 className=" text-yellow-200">{fromMain}</h4>
-                                </div>
-                            )}
+                            <div className="mb-1">
+                                <p>当前连接状态：</p>
+                                {mysqlData?.status}
+                            </div>
+                            <div className="mb-1">
+                                <p>当前库列表：</p>
+                                {mysqlData?.databases
+                                    ? mysqlData.databases.map((item: { Database: string }) => {
+                                          return <div>{item.Database}</div>;
+                                      })
+                                    : "暂无"}
+                            </div>
                         </div>
-                    )}
+                    </div>
+                    <div className="flex-grow text-gray-200 h-full pl-0 py-3 pr-3 p-3 bg-gray-700">123</div>
                 </div>
             </div>
+
+            <div className="h-4 px-3 bg-gray-800">{statusMessage}</div>
         </div>
     );
 }
