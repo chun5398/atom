@@ -6,6 +6,8 @@ import { app, BrowserWindow, ipcMain, IpcMainEvent } from "electron";
 import isDev from "electron-is-dev";
 import path from "path";
 import { MySqlConnetionManager } from "./manager/mysqlConnectionManager";
+import { CreateMysqlConnectionArgs } from "./common/event-types";
+
 require("electron-reload")(__dirname, {
     electron: path.join(__dirname, "../node_modules", ".bin", "electron"),
 });
@@ -112,30 +114,22 @@ ipcMain.on("message", async (event: IpcMainEvent, message: any) => {
     setTimeout(() => event.sender.send("message", "hi from electron"), 500);
 });
 
-ipcMain.on(
-    "create_mysql_connection",
-    async (
-        event: IpcMainEvent,
-        args: {
-            connectionName: string;
-        },
-    ) => {
-        const resp = await globalManager.mysqlConnectionManager?.createMySqlConnection({
-            connectionName: args.connectionName,
-        });
+ipcMain.on("create_mysql_connection", async (event: IpcMainEvent, args: CreateMysqlConnectionArgs) => {
+    const resp = await globalManager.mysqlConnectionManager?.createMySqlConnection({
+        connectionName: args.connectionName,
+    });
 
-        if (resp && resp?.err) {
-            return event.sender.send("server_error", {
-                message: `${resp.err.message}`,
-            });
-        }
-
-        const databases = await globalManager.mysqlConnectionManager
-            ?.getMySqlConnection(args.connectionName)
-            ?.listDatabases();
-        return event.sender.send("create_mysql_connection", {
-            status: 1,
-            databases: databases,
+    if (resp && resp?.err) {
+        return event.sender.send("server_error", {
+            message: `${resp.err.message}`,
         });
-    },
-);
+    }
+
+    const databases = await globalManager.mysqlConnectionManager
+        ?.getMySqlConnection(args.connectionName)
+        ?.listDatabases();
+    return event.sender.send("create_mysql_connection", {
+        status: 1,
+        databases: databases,
+    });
+});

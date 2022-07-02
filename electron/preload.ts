@@ -1,14 +1,16 @@
 import { contextBridge, ipcRenderer } from "electron";
+import { CreateMysqlConnectionArgs } from "./common/event-types";
 
 declare global {
     interface Window {
         Main: typeof api;
         ipcRenderer: typeof ipcRenderer;
+        process: any;
     }
 }
 
 const api = {
-    createMysqlConnection: (args: { connectionName: string }) => {
+    createMysqlConnection: (args: CreateMysqlConnectionArgs) => {
         ipcRenderer.send("create_mysql_connection", args);
     },
 

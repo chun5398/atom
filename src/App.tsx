@@ -31,15 +31,18 @@ function App() {
             setFromMain(null);
         }
     };
-    const handleCreateMysqlConnection = () => {
+    const handleCreateMysqlConnection = async () => {
         if (window.Main) {
-            window.Main.createMysqlConnection({
+            const data = await window.Main.createMysqlConnection({
                 connectionName: Date.now().toString(),
             });
+            console.log(data);
+            
         } else {
             setStatusMessage("You are in a Browser, so no Electron functions are available");
         }
     };
+    const handleCreateRedisConnection = () => {};
 
     const sendMessageToElectron = () => {
         if (window.Main) {
@@ -58,12 +61,14 @@ function App() {
     }, [fromMain, isSent]);
 
     useEffect(() => {
-        window.Main.on("server_error", (message: string) => {
-            setStatusMessage(message);
-        });
-        window.Main.on("create_mysql_connection", (data: MysqlData) => {
-            setMysqlData(data);
-        });
+        if (window.Main) {
+            window.Main.on("server_error", (message: string) => {
+                setStatusMessage(message);
+            });
+            window.Main.on("create_mysql_connection", (data: MysqlData) => {
+                setMysqlData(data);
+            });
+        }
     }, []);
 
     return (
@@ -93,8 +98,8 @@ function App() {
                             <div className="mb-1">
                                 <p>当前库列表：</p>
                                 {mysqlData?.databases
-                                    ? mysqlData.databases.map((item: { Database: string }) => {
-                                          return <div>{item.Database}</div>;
+                                    ? mysqlData.databases.map((item: { Database: string }, index) => {
+                                          return <div key={index}>{item.Database}</div>;
                                       })
                                     : "暂无"}
                             </div>
