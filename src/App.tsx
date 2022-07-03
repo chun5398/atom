@@ -10,7 +10,6 @@ export interface MysqlData {
     status: ConnectionStatus;
     databases: any[];
 }
-
 function App() {
     const [isOpen, setOpen] = useState(false);
     const [isSent, setSent] = useState(false);
@@ -37,12 +36,11 @@ function App() {
                 connectionName: Date.now().toString(),
             });
             console.log(data);
-            
         } else {
             setStatusMessage("You are in a Browser, so no Electron functions are available");
         }
     };
-    const handleCreateRedisConnection = () => {};
+    const handleCreateRedisConnection = async () => {};
 
     const sendMessageToElectron = () => {
         if (window.Main) {
@@ -105,6 +103,14 @@ function App() {
                             </div>
                         </div>
                     </div>
+                    {/* <div className="flex flex-col text-gray-200 text-lg p-3 h-full">
+                        <button
+                            className="flex-none bg-blue-500 p-1 rounded-full text-xs"
+                            onClick={handleCreateRedisConnection}
+                        >
+                            Create Redis Connection
+                        </button>
+                    </div> */}
                     <div className="flex-grow text-gray-200 h-full pl-0 py-3 pr-3 p-3 bg-gray-700">123</div>
                 </div>
             </div>

@@ -1,17 +1,12 @@
-// Native
+// Native1
+
 import { join } from "path";
 
 // Packages
 import { app, BrowserWindow, ipcMain, IpcMainEvent } from "electron";
 import isDev from "electron-is-dev";
-import path from "path";
 import { MySqlConnetionManager } from "./manager/mysqlConnectionManager";
 import { CreateMysqlConnectionArgs } from "./common/event-types";
-
-require("electron-reload")(__dirname, {
-    electron: path.join(__dirname, "../node_modules", ".bin", "electron"),
-});
-console.log(path.join(__dirname, "../node_modules", ".bin", "electron"));
 
 const height = 600;
 const width = 900;
@@ -33,6 +28,10 @@ function createWindow() {
         resizable: true,
         fullscreenable: true,
         webPreferences: {
+            devTools: true,
+            nodeIntegration: true,
+            nodeIntegrationInWorker: true,
+            nodeIntegrationInSubFrames: true,
             preload: join(__dirname, "preload.js"),
         },
     });
