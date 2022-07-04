@@ -24,10 +24,10 @@
     "scripts": {
         "dev": "concurrently \"pnpm dev:vite\" \"pnpm dev:electron\" ",
         "dev:vite": "vite",
-        "dev:electron": "npm run build:electron && electron .",
+        "dev:electron": "npm run build:electron && nodemon --exec electron .",
         "build": "npm run build:vite && npm run build:electron",
         "build:vite": "vite build",
-        "build:electron": "tsc -p electron",
+        "build:electron": "tsc -p electron -w",
         "dist": "npm run build && electron-builder",
         "pack": "npm run build && electron-builder --dir",
         "clean": "rimraf dist main src/out",
